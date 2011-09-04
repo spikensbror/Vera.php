@@ -1,0 +1,11 @@
+FluxTE - Flux Template Engine
+A logical template engine that utilizes a XML-like syntax.
+It's very lightweight and uses a Smarty-like API for implementation.
+
+Features & Concepts:
+- XML-based syntax
+- Lightweight
+- Logical
+- Easy to use and implement
+- Scalable
+- Smarty-like implementation and API
