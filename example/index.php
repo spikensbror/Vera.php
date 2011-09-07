@@ -1,0 +1,18 @@
+<?php
+
+// Include FluxTE.
+include_once('../FluxTE.php');
+
+// Instanciate.
+$template = new FluxTE();
+// Set template root to current directory.
+$template->SetTemplateRoot(dirname(__FILE__));
+// Assign some mock values.
+$template->AssignValue('test', true);
+$template->AssignValue('out_test', 'BUDDY');
+$template->AssignValue('file_test', 'include.tpl');
+
+// Display.
+$template->Display('template.tpl');
+
+?>
