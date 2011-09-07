@@ -303,9 +303,14 @@ class FluxTENode
 	{
 		$output = '';
 		$parse_child = false;
-		$tag = $this->_Data;
-		$tag = $this->_SanitizeTag($tag);
-		$tag = $this->_ProcessInternalVars($tag);
+		if($this->_Type != FTE_NODE_STRING)
+		{
+			$tag = $this->_Data;
+			$tag = $this->_SanitizeTag($tag);
+			$tag = $this->_ProcessInternalVars($tag);
+		}
+		else
+			$tag = '';
 		
 		switch($this->_Type)
 		{
