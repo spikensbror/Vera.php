@@ -8,7 +8,7 @@ Features & Concepts:
 - Scalable
 
 Instruction tokens:
-- # = If
+- : = If
 - ! = Else
 - / = EndIf
 - & = Include
@@ -18,3 +18,4 @@ Usage:
 {(token)variable_name}
 - Ex. {&view} for include of the filepath inside the view variable.
 - Ex. {$view} to display the variable.
+- See in the example folder for a working example.
