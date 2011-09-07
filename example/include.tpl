@@ -1,5 +1,5 @@
-{:test}
+{if($test)}
 Assigned
-{!test}
+{else}
 Not Assigned
-{/test}
+{/if}

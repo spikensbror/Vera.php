@@ -7,20 +7,20 @@
 	<body>
 		<h2>Hello World</h2>
 		<p>
-			{:test}
+			{if($test)}
 			Test is assigned!
-			{!test}
+			{else}
 			Test is not assigned!
-			{/test}
+			{/if}
 		</p>
 		<p>
-			Content of out_test is: {$out_test}
+			Content of out_test is: {($out_test)}
 		</p>
 		<p>
-			This is included: {&file_test}
+			This is included: {include($file_test.tpl)}
 		</p>
 		<p>
-			If without else: {:test}{$out_test}{/test}
+			If without else: {if($test)}{($out_test)}{/if}
 		</p>
 	</body>
 </html>

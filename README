@@ -7,15 +7,12 @@ Features & Concepts:
 - Easy to use and implement
 - Scalable
 
-Instruction tokens:
-- : = If
-- ! = Else
-- / = EndIf
-- & = Include
-- $ = Var
-
 Usage:
-{(token)variable_name}
-- Ex. {&view} for include of the filepath inside the view variable.
-- Ex. {$view} to display the variable.
 - See in the example folder for a working example.
+
+Example of syntax:
+{if($var)}
+Output 1
+{else}
+Output 2
+{/if}
