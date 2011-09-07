@@ -1,11 +1,20 @@
 FluxTE - Flux Template Engine
-A logical template engine that utilizes a XML-like syntax.
-It's very lightweight and uses a Smarty-like API for implementation.
+A lightweight and logical template engine.
 
 Features & Concepts:
-- XML-based syntax
 - Lightweight
 - Logical
 - Easy to use and implement
 - Scalable
-- Smarty-like implementation and API
+
+Instruction tokens:
+- # = If
+- ! = Else
+- / = EndIf
+- & = Include
+- $ = Var
+
+Usage:
+{(token)variable_name}
+- Ex. {&view} for include of the filepath inside the view variable.
+- Ex. {$view} to display the variable.
