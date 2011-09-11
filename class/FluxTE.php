@@ -115,9 +115,9 @@ class FluxTE
 					case '{if': // If
 					{
 						$nodes[$i] = new FluxTENode(FTE_NODE_IF, $this, $tag);
-						if($this->_Last($parent_stack) != FTE_ROOT)
-							$nodes[$this->_Last($parent_stack)]->AddChild($nodes[$i]);
-						$nodes[$i]->SetParent($this->_Last($parent_stack));
+						if(get_last_element($parent_stack) != FTE_ROOT)
+							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
+						$nodes[$i]->SetParent(get_last_element($parent_stack));
 						array_push($parent_stack, $i);
 						$i++;
 						break;
@@ -127,7 +127,7 @@ class FluxTE
 					{
 						$nodes[$i] = new FluxTENode(FTE_NODE_ELSE, $this, $tag);
 						$nodes[$i]->SetParent(FTE_UNASSIGNED);
-						$nodes[$this->_Last($parent_stack)]->SetElse($nodes[$i]);
+						$nodes[get_last_element($parent_stack)]->SetElse($nodes[$i]);
 						array_pop($parent_stack);
 						array_push($parent_stack, $i);
 						$i++;
@@ -143,9 +143,9 @@ class FluxTE
 					case '{($': // Var
 					{
 						$nodes[$i] = new FluxTENode(FTE_NODE_VAR, $this, $tag);
-						if($this->_Last($parent_stack) != FTE_ROOT)
-							$nodes[$this->_Last($parent_stack)]->AddChild($nodes[$i]);
-						$nodes[$i]->SetParent($this->_Last($parent_stack));
+						if(get_last_element($parent_stack) != FTE_ROOT)
+							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
+						$nodes[$i]->SetParent(get_last_element($parent_stack));
 						$i++;
 						break;
 					}
@@ -153,9 +153,9 @@ class FluxTE
 					case '{in': // Include
 					{
 						$nodes[$i] = new FluxTENode(FTE_NODE_INCLUDE, $this, $tag);
-						if($this->_Last($parent_stack) != FTE_ROOT)
-							$nodes[$this->_Last($parent_stack)]->AddChild($nodes[$i]);
-						$nodes[$i]->SetParent($this->_Last($parent_stack));
+						if(get_last_element($parent_stack) != FTE_ROOT)
+							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
+						$nodes[$i]->SetParent(get_last_element($parent_stack));
 						$i++;
 						break;
 					}
@@ -163,9 +163,9 @@ class FluxTE
 					default: // Unknown
 					{
 						$nodes[$i] = new FluxTENode(FTE_NODE_STRING, $this, $chunk);
-						if($this->_Last($parent_stack) != FTE_ROOT)
-							$nodes[$this->_Last($parent_stack)]->AddChild($nodes[$i]);
-						$nodes[$i]->SetParent($this->_Last($parent_stack));
+						if(get_last_element($parent_stack) != FTE_ROOT)
+							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
+						$nodes[$i]->SetParent(get_last_element($parent_stack));
 						$i++;
 						break;
 					}
@@ -178,16 +178,6 @@ class FluxTE
 			if($node->GetParent() == FTE_ROOT)
 				$output .= $node->GetOutput();
 		return $output;
-	}
-	
-	/**
-	 * Returns the last item of an array.
-	 * @param array $array
-	 * @return object 
-	 */
-	private function _Last($array)
-	{
-		return $array[sizeof($array) - 1];
 	}
 	
 	/**
