@@ -12,7 +12,7 @@ class FluxTE
 	 * Template root directory.
 	 * @var string 
 	 */
-	private $_TemplateRoot = '';
+	private $_TemplateRoot = FTE_DIR;
 	
 	/**
 	 * All currently assigned variables.
