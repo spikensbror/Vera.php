@@ -64,21 +64,21 @@ class FluxTENode
 		if($this->_Type != FTE_NODE_STRING)
 		{
 			$tag = $this->_Data;
-			$tag = $this->_ProcessInternalVars($tag);
-			$tag = $this->_SanitizeTag($tag);
+			$tag = fte_process_variables($tag, $this->_Template);
+			$tag = fte_sanitize($tag);
 		}
 		
 		switch($this->_Type)
 		{
 			case FTE_NODE_VAR:
 			{
-				$output = trim($tag, '{()}');
+				$output = $tag;
 				break;
 			}
 			
 			case FTE_NODE_IF:
 			{
-				$tag = substr($tag, strpos($tag, '(')+1, strpos($tag, ')')-strpos($tag, '(')-1);
+				$tag = trim(fte_match('/\((.*?)\)/', $tag), '()');
 				if($tag != '')
 					$parse_child = true;
 				else
@@ -100,13 +100,10 @@ class FluxTENode
 			
 			case FTE_NODE_INCLUDE:
 			{
-				$tag = substr($tag, strpos($tag, '(')+1, strpos($tag, ')')-strpos($tag, '(')-1);
+				$tag = trim(fte_match('/\((.*?)\)/', $tag), '()');
 				if($tag == '')
 					break;
-				$fte = new FluxTE();
-				$fte->SetTemplateRoot($this->_Template->GetTemplateRoot());
-				$fte->Assign($this->_Template->GetVars());
-				$output = $fte->GetOutput($tag);
+				$output = $this->_Template->GetOutput($tag);
 				break;
 			}
 		}
@@ -116,37 +113,6 @@ class FluxTENode
 				$output .= $node->GetOutput();
 		}
 		return $output;
-	}
-	
-	/**
-	 * Sanitizes a tag.
-	 * @param string $tag
-	 * @return string 
-	 */
-	private function _SanitizeTag($tag)
-	{
-		return preg_replace('/[\s\t]/', '', $tag);
-	}
-	
-	/**
-	 * Processes and replaces all internal variables in tag.
-	 * @param string $tag
-	 * @return string 
-	 */
-	private function _ProcessInternalVars($tag)
-	{
-		$vars = array();
-		preg_match_all('/[\$][a-zA-Z0-9_]*/', $tag, $vars, PREG_OFFSET_CAPTURE);
-		foreach($vars as $var)
-		{
-			if(is_array($var) && !empty($var))
-			{
-				$tag = str_replace($var[0][0],
-					($this->_Template->GetVar(substr($var[0][0], 1))) ? $this->_Template->GetVar(substr($var[0][0], 1)) : '',
-					$tag);
-			}
-		}
-		return $tag;
 	}
 	
 	/**

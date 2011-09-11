@@ -14,13 +14,13 @@
 			{/if}
 		</p>
 		<p>
-			Content of out_test is: {($out_test)}
+			Content of out_test is: {$out_test}
 		</p>
 		<p>
-			This is included: {include($file_test.tpl)}
+			This is included: {include($file_test .tpl)}
 		</p>
 		<p>
-			If without else: {if($test)}{($out_test)}{/if}
+			If without else: {if($test)}{$out_test}{/if}
 		</p>
 	</body>
 </html>

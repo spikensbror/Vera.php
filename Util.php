@@ -11,6 +11,62 @@ function get_last_element($array)
 }
 
 /**
+ * Sanitizes a tag
+ * @param string $tag
+ * @return string 
+ */
+function fte_sanitize($tag)
+{
+	return preg_replace('/[{}\s\t]/', '', $tag);
+}
+
+/**
+ * Replaces all variables withing a tag.
+ * @param string $tag
+ * @param FluxTE $template
+ * @return string 
+ */
+function fte_process_variables($tag, &$template)
+{
+	$variables = fte_match_all('/\$[a-zA-Z0-9_]*/', $tag);
+	foreach($variables as $variable)
+	{
+		$variable = substr($variable, 1);
+		$assigned = ($template->GetVar($variable)) ? $template->GetVar($variable) : '';
+		$tag = str_replace('$'.$variable, $assigned, $tag);
+	}
+	return $tag;
+}
+
+/**
+ * Simplified preg_match_all()
+ * @param string $pattern
+ * @param string $subject
+ * @return array 
+ */
+function fte_match_all($pattern, $subject)
+{
+	$temp = array();
+	preg_match_all($pattern, $subject, $matches, PREG_OFFSET_CAPTURE);
+	if(!empty($matches))
+		foreach($matches as $match)
+			$temp[] = $match[0][0];
+	return $temp;
+}
+
+/**
+ * Simplified preg_match()
+ * @param string $pattern
+ * @param string $subject
+ * @return string 
+ */
+function fte_match($pattern, $subject)
+{
+	preg_match($pattern, $subject, $match, PREG_OFFSET_CAPTURE);
+	return (isset($match[0][0])) ? $match[0][0] : '';
+}
+
+/**
  * FluxTE autoload function.
  * @param string $class
  * @return boolean 

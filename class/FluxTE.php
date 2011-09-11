@@ -108,13 +108,13 @@ class FluxTE
 				$chunk = $chunks[$j];
 				if($chunk == '')
 					continue;
-				$pragma = substr($chunk, 0, 3);
-				$tag = trim($chunk, '{}');
-				switch($pragma)
+				$instruction = preg_replace('/\((.*?)\)/', '', $chunk);
+				$instruction = preg_replace('/[\s\t]/', '', $instruction);
+				switch($instruction)
 				{
-					case '{if': // If
+					case '{if}': // If
 					{
-						$nodes[$i] = new FluxTENode(FTE_NODE_IF, $this, $tag);
+						$nodes[$i] = new FluxTENode(FTE_NODE_IF, $this, $chunk);
 						if(get_last_element($parent_stack) != FTE_ROOT)
 							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
 						$nodes[$i]->SetParent(get_last_element($parent_stack));
@@ -123,9 +123,9 @@ class FluxTE
 						break;
 					}
 					
-					case '{el': // Else
+					case '{else}': // Else
 					{
-						$nodes[$i] = new FluxTENode(FTE_NODE_ELSE, $this, $tag);
+						$nodes[$i] = new FluxTENode(FTE_NODE_ELSE, $this, $chunk);
 						$nodes[$i]->SetParent(FTE_UNASSIGNED);
 						$nodes[get_last_element($parent_stack)]->SetElse($nodes[$i]);
 						array_pop($parent_stack);
@@ -134,25 +134,15 @@ class FluxTE
 						break;
 					}
 					
-					case '{/i': // End
+					case '{/if}': // End
 					{
 						array_pop($parent_stack);
 						break;
 					}
 					
-					case '{($': // Var
+					case '{include}': // Include
 					{
-						$nodes[$i] = new FluxTENode(FTE_NODE_VAR, $this, $tag);
-						if(get_last_element($parent_stack) != FTE_ROOT)
-							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
-						$nodes[$i]->SetParent(get_last_element($parent_stack));
-						$i++;
-						break;
-					}
-					
-					case '{in': // Include
-					{
-						$nodes[$i] = new FluxTENode(FTE_NODE_INCLUDE, $this, $tag);
+						$nodes[$i] = new FluxTENode(FTE_NODE_INCLUDE, $this, $chunk);
 						if(get_last_element($parent_stack) != FTE_ROOT)
 							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
 						$nodes[$i]->SetParent(get_last_element($parent_stack));
@@ -162,7 +152,10 @@ class FluxTE
 					
 					default: // Unknown
 					{
-						$nodes[$i] = new FluxTENode(FTE_NODE_STRING, $this, $chunk);
+						if(substr($instruction, 0, 2) == '{$')
+							$nodes[$i] = new FluxTENode(FTE_NODE_VAR, $this, $chunk);
+						else
+							$nodes[$i] = new FluxTENode(FTE_NODE_STRING, $this, $chunk);
 						if(get_last_element($parent_stack) != FTE_ROOT)
 							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
 						$nodes[$i]->SetParent(get_last_element($parent_stack));
