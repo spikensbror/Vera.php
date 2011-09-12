@@ -116,6 +116,15 @@ class FluxNode
 	}
 	
 	/**
+	 * Gets the node type.
+	 * @return int 
+	 */
+	public function GetType()
+	{
+		return $this->_Type;
+	}
+	
+	/**
 	 * Sets the parent id.
 	 * @param int $parent 
 	 */

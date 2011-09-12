@@ -9,6 +9,18 @@
 class FluxTemplate
 {
 	/**
+	 * Holds all instructions and ids.
+	 * @var array 
+	 */
+	private $_Instructions = array
+	(
+		'{if}' => FTE_NODE_IF,
+		'{else}' => FTE_NODE_ELSE,
+		'{/if}' => FTE_INSTR_EIF,
+		'{include}' => FTE_NODE_INCLUDE
+	);
+	
+	/**
 	 * Template root directory.
 	 * @var string 
 	 */
@@ -110,59 +122,68 @@ class FluxTemplate
 					continue;
 				$instruction = preg_replace('/\((.*?)\)/', '', $chunk);
 				$instruction = preg_replace('/[\s\t]/', '', $instruction);
-				switch($instruction)
+				
+				$instruction_id = -1;
+				if(isset($this->_Instructions[$instruction]))
+					$instruction_id = $this->_Instructions[$instruction];
+				else
+					if(substr($instruction, 0, 2) == '{$')
+						$instruction_id = FTE_NODE_VAR;
+					else
+						$instruction_id = FTE_NODE_STRING;
+				
+				// If instruction id is of node type.
+				if($instruction_id < 20)
 				{
-					case '{if}': // If
+					$nodes[$i] = new FluxNode($instruction_id, $this, $chunk);
+					$nodes[$i]->SetParent(get_last_element($parent_stack));
+				}
+				
+				switch($instruction_id)
+				{
+					case FTE_NODE_IF:
+					case FTE_NODE_INCLUDE:
+					case FTE_NODE_STRING:
+					case FTE_NODE_VAR:
 					{
-						$nodes[$i] = new FluxNode(FTE_NODE_IF, $this, $chunk);
 						if(get_last_element($parent_stack) != FTE_ROOT)
 							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
-						$nodes[$i]->SetParent(get_last_element($parent_stack));
+						break;
+					}
+				}
+				
+				switch($instruction_id)
+				{
+					case FTE_NODE_IF:
+					{
 						array_push($parent_stack, $i);
-						$i++;
 						break;
 					}
 					
-					case '{else}': // Else
+					case FTE_NODE_ELSE:
 					{
-						$nodes[$i] = new FluxNode(FTE_NODE_ELSE, $this, $chunk);
+						if($nodes[get_last_element($parent_stack)]->GetType() != FTE_NODE_IF)
+							throw new Exception('FluxTE : Else found without If!');
 						$nodes[$i]->SetParent(FTE_UNASSIGNED);
 						$nodes[get_last_element($parent_stack)]->SetElse($nodes[$i]);
 						array_pop($parent_stack);
 						array_push($parent_stack, $i);
-						$i++;
 						break;
 					}
 					
-					case '{/if}': // End
+					case FTE_INSTR_EIF:
 					{
+						if($nodes[get_last_element($parent_stack)]->GetType() != FTE_NODE_IF
+							&& $nodes[get_last_element($parent_stack)]->GetType() != FTE_NODE_ELSE)
+							throw new Exception('FluxTE : EndIf found without If or Else!');
 						array_pop($parent_stack);
 						break;
 					}
-					
-					case '{include}': // Include
-					{
-						$nodes[$i] = new FluxNode(FTE_NODE_INCLUDE, $this, $chunk);
-						if(get_last_element($parent_stack) != FTE_ROOT)
-							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
-						$nodes[$i]->SetParent(get_last_element($parent_stack));
-						$i++;
-						break;
-					}
-					
-					default: // Unknown
-					{
-						if(substr($instruction, 0, 2) == '{$')
-							$nodes[$i] = new FluxNode(FTE_NODE_VAR, $this, $chunk);
-						else
-							$nodes[$i] = new FluxNode(FTE_NODE_STRING, $this, $chunk);
-						if(get_last_element($parent_stack) != FTE_ROOT)
-							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
-						$nodes[$i]->SetParent(get_last_element($parent_stack));
-						$i++;
-						break;
-					}
 				}
+				
+				// If instruction id is of node type.
+				if($instruction_id < 20)
+					$i++;
 			}
 		}
 		
