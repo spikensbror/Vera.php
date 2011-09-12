@@ -127,7 +127,7 @@ class FluxTemplate
 				if(isset($this->_Instructions[$instruction]))
 					$instruction_id = $this->_Instructions[$instruction];
 				else
-					if(substr($instruction, 0, 2) == '{$')
+					if(fte_match('/{\$[a-zA-Z0-9]}/', $chunk) != '')
 						$instruction_id = FTE_NODE_VAR;
 					else
 						$instruction_id = FTE_NODE_STRING;
