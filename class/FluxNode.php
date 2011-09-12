@@ -5,7 +5,7 @@
  * 
  * Handles node ouput and input.
  */
-class FluxTENode
+class FluxNode
 {
 	/**
 	 * Type of the node.
@@ -39,7 +39,7 @@ class FluxTENode
 	
 	/**
 	 * Else node for if statements.
-	 * @var FluxTENode 
+	 * @var FluxNode 
 	 */
 	private $_Else = null;
 	
@@ -135,7 +135,7 @@ class FluxTENode
 	
 	/**
 	 * Sets the else node for if nodes.
-	 * @param FluxTENode $node 
+	 * @param FluxNode $node 
 	 */
 	public function SetElse(&$node)
 	{
@@ -144,7 +144,7 @@ class FluxTENode
 	
 	/**
 	 * Adds a child node to the node.
-	 * @param FluxTENode $node 
+	 * @param FluxNode $node 
 	 */
 	public function AddChild(&$node)
 	{

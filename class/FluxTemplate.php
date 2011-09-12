@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Flux Template Engine
+ * Flux Template
  * 
- * The FTE main class which will handle all template parsing
+ * The main class which will handle all template parsing
  * and output.
  */
-class FluxTE
+class FluxTemplate
 {
 	/**
 	 * Template root directory.
@@ -114,7 +114,7 @@ class FluxTE
 				{
 					case '{if}': // If
 					{
-						$nodes[$i] = new FluxTENode(FTE_NODE_IF, $this, $chunk);
+						$nodes[$i] = new FluxNode(FTE_NODE_IF, $this, $chunk);
 						if(get_last_element($parent_stack) != FTE_ROOT)
 							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
 						$nodes[$i]->SetParent(get_last_element($parent_stack));
@@ -125,7 +125,7 @@ class FluxTE
 					
 					case '{else}': // Else
 					{
-						$nodes[$i] = new FluxTENode(FTE_NODE_ELSE, $this, $chunk);
+						$nodes[$i] = new FluxNode(FTE_NODE_ELSE, $this, $chunk);
 						$nodes[$i]->SetParent(FTE_UNASSIGNED);
 						$nodes[get_last_element($parent_stack)]->SetElse($nodes[$i]);
 						array_pop($parent_stack);
@@ -142,7 +142,7 @@ class FluxTE
 					
 					case '{include}': // Include
 					{
-						$nodes[$i] = new FluxTENode(FTE_NODE_INCLUDE, $this, $chunk);
+						$nodes[$i] = new FluxNode(FTE_NODE_INCLUDE, $this, $chunk);
 						if(get_last_element($parent_stack) != FTE_ROOT)
 							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
 						$nodes[$i]->SetParent(get_last_element($parent_stack));
@@ -153,9 +153,9 @@ class FluxTE
 					default: // Unknown
 					{
 						if(substr($instruction, 0, 2) == '{$')
-							$nodes[$i] = new FluxTENode(FTE_NODE_VAR, $this, $chunk);
+							$nodes[$i] = new FluxNode(FTE_NODE_VAR, $this, $chunk);
 						else
-							$nodes[$i] = new FluxTENode(FTE_NODE_STRING, $this, $chunk);
+							$nodes[$i] = new FluxNode(FTE_NODE_STRING, $this, $chunk);
 						if(get_last_element($parent_stack) != FTE_ROOT)
 							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
 						$nodes[$i]->SetParent(get_last_element($parent_stack));

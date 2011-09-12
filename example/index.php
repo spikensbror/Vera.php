@@ -4,7 +4,7 @@
 include_once('../FluxTE.php');
 
 // Instanciate.
-$template = new FluxTE();
+$template = new FluxTemplate();
 // Set template root to current directory.
 $template->SetTemplateRoot(dirname(__FILE__));
 // Assign some mock values.
