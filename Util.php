@@ -21,7 +21,7 @@ function fte_sanitize($tag)
 }
 
 /**
- * Makes all variables distinguishable betweent strings.
+ * Makes all variables distinguishable between strings.
  * @param string $tag
  * @return string
  */
