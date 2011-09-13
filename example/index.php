@@ -16,9 +16,18 @@ $template->AssignValue
 	'each_test',
 	array
 	(
-		array('test' => 'Hello Bed'),
+		array('test' => 'Hello Bed', 'arr' => array('var' => 'Jibberish')),
 		array('test' => 'Hello World'),
 		array('test' => 'Hello Friend')
+	)
+);
+$template->AssignValue
+(
+	'array',
+	array
+	(
+		0 => 'Nothing much.',
+		'test' => 'What is up?'
 	)
 );
 

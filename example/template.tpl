@@ -25,8 +25,11 @@
 		<p>
 			Each:
 			{each($each_test)}
-			<p>{$test}</p>
+			<p>{$test} {if($arr)}{$arr['var']}{/if}</p>
 			{/each}
+		</p>
+		<p>
+			Array variables: {$array['test']} {$array[0]}
 		</p>
 	</body>
 </html>

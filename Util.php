@@ -27,7 +27,7 @@ function fte_sanitize($tag)
  */
 function fte_preprocess_variables($tag)
 {
-	$matches = fte_match_all('/\$[a-zA-Z0-9_]*/', $tag);
+	$matches = fte_match_all('/\$[a-zA-Z0-9_\[\]\'\"]*/', $tag);
 	foreach($matches as $match)
 		$tag = str_replace($match, '('.$match.')', $tag);
 	return $tag;
@@ -41,12 +41,22 @@ function fte_preprocess_variables($tag)
  */
 function fte_process_variables($tag, $variables)
 {
-	$matches = fte_match_all('/\(\$[a-zA-Z0-9_]*\)/', $tag);
+	$matches = fte_match_all('/\(\$.*?\)/', $tag);
 	foreach($matches as $match)
 	{
 		$match = substr(trim($match, '()'), 1);
-		$assigned = (isset($variables[$match])) ? $variables[$match] : '';
-		$tag = str_replace('($'.$match.')', $assigned, $tag);
+		$match2 = fte_match('/\[.*?\]/', $match);
+		if($match2 != '')
+		{
+			$match = preg_replace('/\[.*?\]/', '', $match);
+			$match3 = trim($match2, '[]\'"');
+			if(!is_array($variables[$match]) || !isset($variables[$match][$match3]))
+				throw new Exception('FluxTE : Variable is not an array or points to a non-existant element!');
+			$assigned = $variables[$match][$match3];
+		}
+		else
+			$assigned = (isset($variables[$match])) ? $variables[$match] : '';
+		$tag = str_replace('($'.$match.$match2.')', (string)$assigned, $tag);
 	}
 	return $tag;
 }
