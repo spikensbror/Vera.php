@@ -48,15 +48,15 @@ function fte_process_variables($tag, $variables)
 		$match2 = fte_match('/\[.*?\]/', $match);
 		if($match2 != '')
 		{
-			$match = preg_replace('/\[.*?\]/', '', $match);
-			$match3 = trim($match2, '[]\'"');
-			if(!is_array($variables[$match]) || !isset($variables[$match][$match3]))
+			$match2 = trim($match2, '[]\'"');
+			$match3 = preg_replace('/\[.*?\]/', '', $match);
+			if(!is_array($variables[$match3]) || !isset($variables[$match3][$match2]))
 				throw new Exception('FluxTE : Variable is not an array or points to a non-existant element!');
-			$assigned = $variables[$match][$match3];
+			$assigned = $variables[$match3][$match2];
 		}
 		else
 			$assigned = (isset($variables[$match])) ? $variables[$match] : '';
-		$tag = str_replace('($'.$match.$match2.')', (string)$assigned, $tag);
+		$tag = str_replace('($'.$match.')', (string)$assigned, $tag);
 	}
 	return $tag;
 }
