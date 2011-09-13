@@ -22,5 +22,11 @@
 		<p>
 			If without else: {if($test)}{$out_test}{/if}
 		</p>
+		<p>
+			Each:
+			{each($each_test)}
+			<p>{$test}</p>
+			{/each}
+		</p>
 	</body>
 </html>

@@ -21,19 +21,32 @@ function fte_sanitize($tag)
 }
 
 /**
+ * Makes all variables distinguishable betweent strings.
+ * @param string $tag
+ * @return string
+ */
+function fte_preprocess_variables($tag)
+{
+	$matches = fte_match_all('/\$[a-zA-Z0-9_]*/', $tag);
+	foreach($matches as $match)
+		$tag = str_replace($match, '('.$match.')', $tag);
+	return $tag;
+}
+
+/**
  * Replaces all variables withing a tag.
  * @param string $tag
  * @param FluxTE $template
  * @return string 
  */
-function fte_process_variables($tag, &$template)
+function fte_process_variables($tag, $variables)
 {
-	$variables = fte_match_all('/\$[a-zA-Z0-9_]*/', $tag);
-	foreach($variables as $variable)
+	$matches = fte_match_all('/\(\$[a-zA-Z0-9_]*\)/', $tag);
+	foreach($matches as $match)
 	{
-		$variable = substr($variable, 1);
-		$assigned = ($template->GetVar($variable)) ? $template->GetVar($variable) : '';
-		$tag = str_replace('$'.$variable, $assigned, $tag);
+		$match = substr(trim($match, '()'), 1);
+		$assigned = (isset($variables[$match])) ? $variables[$match] : '';
+		$tag = str_replace('($'.$match.')', $assigned, $tag);
 	}
 	return $tag;
 }

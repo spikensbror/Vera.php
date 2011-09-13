@@ -35,7 +35,13 @@ class FluxNode
 	 * Parent id of the node.
 	 * @var int 
 	 */
-	private $_Parent = FTE_ROOT;
+	private $_ParentId = FTE_ROOT;
+	
+	/**
+	 * Parent node of the node.
+	 * @var FluxNode 
+	 */
+	private $_Parent = null;
 	
 	/**
 	 * Else node for if statements.
@@ -57,15 +63,21 @@ class FluxNode
 	 * Parses and returns node output.
 	 * @return string 
 	 */
-	public function GetOutput()
+	public function GetOutput($variables = null)
 	{
+		if($variables == null)
+			$variables = $this->_Template->GetVars();
+		
 		$output = '';
 		$parse_child = false;
 		if($this->_Type != FTE_NODE_STRING)
 		{
 			$tag = $this->_Data;
-			$tag = fte_process_variables($tag, $this->_Template);
+			if($this->_Type != FTE_NODE_EACH)
+				$tag = fte_preprocess_variables($tag);
 			$tag = fte_sanitize($tag);
+			if($this->_Type != FTE_NODE_EACH)
+				$tag = fte_process_variables($tag, $variables);
 		}
 		
 		switch($this->_Type)
@@ -106,11 +118,29 @@ class FluxNode
 				$output = $this->_Template->GetOutput($tag);
 				break;
 			}
+			
+			case FTE_NODE_EACH:
+			{
+				$tag = trim(fte_match('/\((.*?)\)/', $tag), '()');
+				$tag = substr($tag, 1);
+				$each_array = $this->_Template->GetVar($tag);
+				
+				if(!is_array($each_array) || empty($each_array) || !is_array($each_array[0]))
+					break;
+				
+				foreach($each_array as $array)
+				{
+					$variables = $array;
+					foreach($this->_ChildNodes as $node)
+						$output .= $node->GetOutput($variables);
+				}
+				break;
+			}
 		}
 		if($parse_child)
 		{
 			foreach($this->_ChildNodes as $node)
-				$output .= $node->GetOutput();
+				$output .= $node->GetOutput($variables);
 		}
 		return $output;
 	}
@@ -125,21 +155,39 @@ class FluxNode
 	}
 	
 	/**
+	 * Adds a child node to the node.
+	 * @param FluxNode $node 
+	 */
+	public function AddChild(&$node)
+	{
+		$this->_ChildNodes[] =& $node;
+	}
+	
+	/**
 	 * Sets the parent id.
 	 * @param int $parent 
 	 */
-	public function SetParent($parent)
+	public function SetParentId($parent)
 	{
-		$this->_Parent = $parent;
+		$this->_ParentId = $parent;
 	}
 	
 	/**
 	 * Gets the parent id.
 	 * @return int 
 	 */
-	public function GetParent()
+	public function GetParentId()
 	{
-		return $this->_Parent;
+		return $this->_ParentId;
+	}
+	
+	/**
+	 * Sets the nodes parent node.
+	 * @param FluxNode $node 
+	 */
+	public function SetParent(&$node)
+	{
+		$this->_Parent =& $node;
 	}
 	
 	/**
@@ -149,15 +197,6 @@ class FluxNode
 	public function SetElse(&$node)
 	{
 		$this->_Else =& $node;
-	}
-	
-	/**
-	 * Adds a child node to the node.
-	 * @param FluxNode $node 
-	 */
-	public function AddChild(&$node)
-	{
-		$this->_ChildNodes[] =& $node;
 	}
 }
 

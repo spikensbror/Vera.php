@@ -17,7 +17,9 @@ class FluxTemplate
 		'{if}' => FTE_NODE_IF,
 		'{else}' => FTE_NODE_ELSE,
 		'{/if}' => FTE_INSTR_EIF,
-		'{include}' => FTE_NODE_INCLUDE
+		'{include}' => FTE_NODE_INCLUDE,
+		'{each}' => FTE_NODE_EACH,
+		'{/each}' => FTE_INSTR_EEACH
 	);
 	
 	/**
@@ -127,7 +129,7 @@ class FluxTemplate
 				if(isset($this->_Instructions[$instruction]))
 					$instruction_id = $this->_Instructions[$instruction];
 				else
-					if(fte_match('/{\$[a-zA-Z0-9]}/', $chunk) != '')
+					if(fte_match('/{\$.*?}/', $instruction) != '')
 						$instruction_id = FTE_NODE_VAR;
 					else
 						$instruction_id = FTE_NODE_STRING;
@@ -136,7 +138,9 @@ class FluxTemplate
 				if($instruction_id < 20)
 				{
 					$nodes[$i] = new FluxNode($instruction_id, $this, $chunk);
-					$nodes[$i]->SetParent(get_last_element($parent_stack));
+					$nodes[$i]->SetParentId(get_last_element($parent_stack));
+					if(get_last_element($parent_stack) != FTE_ROOT)
+						$nodes[$i]->SetParent($nodes[get_last_element($parent_stack)]);
 				}
 				
 				switch($instruction_id)
@@ -145,6 +149,7 @@ class FluxTemplate
 					case FTE_NODE_INCLUDE:
 					case FTE_NODE_STRING:
 					case FTE_NODE_VAR:
+					case FTE_NODE_EACH:
 					{
 						if(get_last_element($parent_stack) != FTE_ROOT)
 							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
@@ -164,7 +169,7 @@ class FluxTemplate
 					{
 						if($nodes[get_last_element($parent_stack)]->GetType() != FTE_NODE_IF)
 							throw new Exception('FluxTE : Else found without If!');
-						$nodes[$i]->SetParent(FTE_UNASSIGNED);
+						$nodes[$i]->SetParentId(FTE_UNASSIGNED);
 						$nodes[get_last_element($parent_stack)]->SetElse($nodes[$i]);
 						array_pop($parent_stack);
 						array_push($parent_stack, $i);
@@ -179,6 +184,20 @@ class FluxTemplate
 						array_pop($parent_stack);
 						break;
 					}
+					
+					case FTE_NODE_EACH:
+					{
+						array_push($parent_stack, $i);
+						break;
+					}
+					
+					case FTE_INSTR_EEACH:
+					{
+						if($nodes[get_last_element($parent_stack)]->GetType() != FTE_NODE_EACH)
+							throw new Exception('FluxTE : EndEach found without Each!');
+						array_pop($parent_stack);
+						break;
+					}
 				}
 				
 				// If instruction id is of node type.
@@ -189,7 +208,7 @@ class FluxTemplate
 		
 		$output = '';
 		foreach($nodes as $node)
-			if($node->GetParent() == FTE_ROOT)
+			if($node->GetParentId() == FTE_ROOT)
 				$output .= $node->GetOutput();
 		return $output;
 	}
