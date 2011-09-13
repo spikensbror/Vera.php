@@ -92,6 +92,8 @@ function fte_autoload($class)
 		include_once($path);
 	return $result;
 }
+
+// Register autoload.
 spl_autoload_register('fte_autoload');
 
 ?>
