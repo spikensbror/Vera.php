@@ -74,9 +74,6 @@ class VeraNode
 		{
 			$tag = $this->_Data;
 			if($this->_Type != VERA_NODE_EACH)
-				$tag = vera_preprocess_variables($tag);
-			$tag = vera_sanitize($tag);
-			if($this->_Type != VERA_NODE_EACH)
 				$tag = vera_process_variables($tag, $variables);
 		}
 		

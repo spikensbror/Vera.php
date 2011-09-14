@@ -11,36 +11,32 @@ function vera_last_element($array)
 }
 
 /**
- * Sanitizes a tag
- * @param string $tag
- * @return string 
- */
-function vera_sanitize($tag)
-{
-	return preg_replace('/[{}\s\t]/', '', $tag);
-}
-
-/**
  * Makes all variables distinguishable between strings.
  * @param string $tag
  * @return string
  */
 function vera_preprocess_variables($tag)
 {
-	$matches = vera_match_all('/\$[a-zA-Z0-9_\[\]\'\"]*/', $tag);
+	$matches = vera_match_all('/\$[a-zA-Z0-9_]*\[.*?\]/', $tag);
+	if(empty($matches) || $matches[0] == null)
+		$matches = vera_match_all('/\$[a-zA-Z0-9_]*/', $tag);
+	
 	foreach($matches as $match)
 		$tag = str_replace($match, '('.$match.')', $tag);
+	$tag = preg_replace('/[{}\s\t\'"]/', '', $tag);
+	
 	return $tag;
 }
 
 /**
  * Replaces all variables withing a tag.
  * @param string $tag
- * @param FluxTE $template
+ * @param array $variables
  * @return string 
  */
 function vera_process_variables($tag, $variables)
 {
+	$tag = vera_preprocess_variables($tag);
 	$matches = vera_match_all('/\(\$.*?\)/', $tag);
 	foreach($matches as $match)
 	{
@@ -48,7 +44,7 @@ function vera_process_variables($tag, $variables)
 		$match2 = vera_match('/\[.*?\]/', $match);
 		if($match2 != '')
 		{
-			$match2 = trim($match2, '[]\'"');
+			$match2 = trim($match2, '[]');
 			$match3 = preg_replace('/\[.*?\]/', '', $match);
 			if(!is_array($variables[$match3]) || !isset($variables[$match3][$match2]))
 				throw new Exception('FluxTE : Variable is not an array or points to a non-existant element!');
@@ -71,7 +67,7 @@ function vera_match_all($pattern, $subject)
 {
 	$temp = array();
 	preg_match_all($pattern, $subject, $matches, PREG_OFFSET_CAPTURE);
-	if(!empty($matches))
+	if(!empty($matches) && !empty($matches[0]))
 		foreach($matches as $match)
 			$temp[] = $match[0][0];
 	return $temp;

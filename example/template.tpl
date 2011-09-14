@@ -24,7 +24,7 @@
 		</p>
 		<h3>Include</h3>
 		<p>
-			This is included: {include($include_test .tpl)}
+			This is included: {include($include_test'.tpl')}
 		</p>
 		<h3>Each</h3>
 		<p>
