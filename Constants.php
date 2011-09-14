@@ -1,22 +1,22 @@
 <?php
 
-// FluxTE root directory.
-define('FTE_DIR', dirname(__FILE__).'/');
+// Vera root directory.
+define('VERA_DIR', dirname(__FILE__).'/');
 
 // Node types.
-define('FTE_NODE_VAR', 10); // Assigned Var
-define('FTE_NODE_IF', 11); // If
-define('FTE_NODE_ELSE', 12); // Else
-define('FTE_NODE_STRING', 13); // String
-define('FTE_NODE_INCLUDE', 14); // Include
-define('FTE_NODE_EACH', 15); // Each
+define('VERA_NODE_VAR', 10); // Assigned Var
+define('VERA_NODE_IF', 11); // If
+define('VERA_NODE_ELSE', 12); // Else
+define('VERA_NODE_STRING', 13); // String
+define('VERA_NODE_INCLUDE', 14); // Include
+define('VERA_NODE_EACH', 15); // Each
 
 // Instruction types.
-define('FTE_INSTR_EIF', 20); // EndIf
-define('FTE_INSTR_EEACH', 21); // EndEach
+define('VERA_INSTR_EIF', 20); // EndIf
+define('VERA_INSTR_EEACH', 21); // EndEach
 
 // Standard parents.
-define('FTE_UNASSIGNED', -2);
-define('FTE_ROOT', -1);
+define('VERA_UNASSIGNED', -2);
+define('VERA_ROOT', -1);
 
 ?>

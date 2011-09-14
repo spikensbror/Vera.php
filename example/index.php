@@ -1,10 +1,10 @@
 <?php
 
-// Include FluxTE.
-include_once('../FluxTE.php');
+// Include Vera.
+include_once('../Vera.php');
 
 // Instanciate.
-$template = new FluxTemplate();
+$template = new VeraTemplate();
 // Set template root to current directory.
 $template->SetTemplateRoot(dirname(__FILE__));
 // Assign some mock values.

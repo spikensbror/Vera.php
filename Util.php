@@ -5,7 +5,7 @@
  * @param array $array
  * @return object 
  */
-function get_last_element($array)
+function vera_last_element($array)
 {
 	return $array[sizeof($array) - 1];
 }
@@ -15,7 +15,7 @@ function get_last_element($array)
  * @param string $tag
  * @return string 
  */
-function fte_sanitize($tag)
+function vera_sanitize($tag)
 {
 	return preg_replace('/[{}\s\t]/', '', $tag);
 }
@@ -25,9 +25,9 @@ function fte_sanitize($tag)
  * @param string $tag
  * @return string
  */
-function fte_preprocess_variables($tag)
+function vera_preprocess_variables($tag)
 {
-	$matches = fte_match_all('/\$[a-zA-Z0-9_\[\]\'\"]*/', $tag);
+	$matches = vera_match_all('/\$[a-zA-Z0-9_\[\]\'\"]*/', $tag);
 	foreach($matches as $match)
 		$tag = str_replace($match, '('.$match.')', $tag);
 	return $tag;
@@ -39,13 +39,13 @@ function fte_preprocess_variables($tag)
  * @param FluxTE $template
  * @return string 
  */
-function fte_process_variables($tag, $variables)
+function vera_process_variables($tag, $variables)
 {
-	$matches = fte_match_all('/\(\$.*?\)/', $tag);
+	$matches = vera_match_all('/\(\$.*?\)/', $tag);
 	foreach($matches as $match)
 	{
 		$match = substr(trim($match, '()'), 1);
-		$match2 = fte_match('/\[.*?\]/', $match);
+		$match2 = vera_match('/\[.*?\]/', $match);
 		if($match2 != '')
 		{
 			$match2 = trim($match2, '[]\'"');
@@ -67,7 +67,7 @@ function fte_process_variables($tag, $variables)
  * @param string $subject
  * @return array 
  */
-function fte_match_all($pattern, $subject)
+function vera_match_all($pattern, $subject)
 {
 	$temp = array();
 	preg_match_all($pattern, $subject, $matches, PREG_OFFSET_CAPTURE);
@@ -83,20 +83,20 @@ function fte_match_all($pattern, $subject)
  * @param string $subject
  * @return string 
  */
-function fte_match($pattern, $subject)
+function vera_match($pattern, $subject)
 {
 	preg_match($pattern, $subject, $match, PREG_OFFSET_CAPTURE);
 	return (isset($match[0][0])) ? $match[0][0] : '';
 }
 
 /**
- * FluxTE autoload function.
+ * Vera autoload function.
  * @param string $class
  * @return boolean 
  */
-function fte_autoload($class)
+function vera_autoload($class)
 {
-	$path = FTE_DIR.'class/'.$class.'.php';
+	$path = VERA_DIR.'class/'.$class.'.php';
 	$result = is_file($path);
 	if($result)
 		include_once($path);
@@ -104,6 +104,6 @@ function fte_autoload($class)
 }
 
 // Register autoload.
-spl_autoload_register('fte_autoload');
+spl_autoload_register('vera_autoload');
 
 ?>

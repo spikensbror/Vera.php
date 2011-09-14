@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Flux Template
+ * Vera Template
  * 
  * The main class which will handle all template parsing
  * and output.
  */
-class FluxTemplate
+class VeraTemplate
 {
 	/**
 	 * Holds all instructions and ids.
@@ -14,19 +14,19 @@ class FluxTemplate
 	 */
 	private $_Instructions = array
 	(
-		'{if}' => FTE_NODE_IF,
-		'{else}' => FTE_NODE_ELSE,
-		'{/if}' => FTE_INSTR_EIF,
-		'{include}' => FTE_NODE_INCLUDE,
-		'{each}' => FTE_NODE_EACH,
-		'{/each}' => FTE_INSTR_EEACH
+		'{if}' => VERA_NODE_IF,
+		'{else}' => VERA_NODE_ELSE,
+		'{/if}' => VERA_INSTR_EIF,
+		'{include}' => VERA_NODE_INCLUDE,
+		'{each}' => VERA_NODE_EACH,
+		'{/each}' => VERA_INSTR_EEACH
 	);
 	
 	/**
 	 * Template root directory.
 	 * @var string 
 	 */
-	private $_TemplateRoot = FTE_DIR;
+	private $_TemplateRoot = VERA_DIR;
 	
 	/**
 	 * All currently assigned variables.
@@ -113,7 +113,7 @@ class FluxTemplate
 	{
 		$chunks = preg_split('/({.*?})/', $tpl, -1, PREG_SPLIT_DELIM_CAPTURE);
 		$nodes = array();
-		$parent_stack = array(FTE_ROOT);
+		$parent_stack = array(VERA_ROOT);
 		if(is_array($chunks))
 		{
 			$i = 0;
@@ -129,71 +129,71 @@ class FluxTemplate
 				if(isset($this->_Instructions[$instruction]))
 					$instruction_id = $this->_Instructions[$instruction];
 				else
-					if(fte_match('/{\$.*?}/', $instruction) != '')
-						$instruction_id = FTE_NODE_VAR;
+					if(vera_match('/{\$.*?}/', $instruction) != '')
+						$instruction_id = VERA_NODE_VAR;
 					else
-						$instruction_id = FTE_NODE_STRING;
+						$instruction_id = VERA_NODE_STRING;
 				
 				// If instruction id is of node type.
 				if($instruction_id < 20)
 				{
-					$nodes[$i] = new FluxNode($instruction_id, $this, $chunk);
-					$nodes[$i]->SetParentId(get_last_element($parent_stack));
-					if(get_last_element($parent_stack) != FTE_ROOT)
-						$nodes[$i]->SetParent($nodes[get_last_element($parent_stack)]);
+					$nodes[$i] = new VeraNode($instruction_id, $this, $chunk);
+					$nodes[$i]->SetParentId(vera_last_element($parent_stack));
+					if(vera_last_element($parent_stack) != VERA_ROOT)
+						$nodes[$i]->SetParent($nodes[vera_last_element($parent_stack)]);
 				}
 				
 				switch($instruction_id)
 				{
-					case FTE_NODE_IF:
-					case FTE_NODE_INCLUDE:
-					case FTE_NODE_STRING:
-					case FTE_NODE_VAR:
-					case FTE_NODE_EACH:
+					case VERA_NODE_IF:
+					case VERA_NODE_INCLUDE:
+					case VERA_NODE_STRING:
+					case VERA_NODE_VAR:
+					case VERA_NODE_EACH:
 					{
-						if(get_last_element($parent_stack) != FTE_ROOT)
-							$nodes[get_last_element($parent_stack)]->AddChild($nodes[$i]);
+						if(vera_last_element($parent_stack) != VERA_ROOT)
+							$nodes[vera_last_element($parent_stack)]->AddChild($nodes[$i]);
 						break;
 					}
 				}
 				
 				switch($instruction_id)
 				{
-					case FTE_NODE_IF:
+					case VERA_NODE_IF:
 					{
 						array_push($parent_stack, $i);
 						break;
 					}
 					
-					case FTE_NODE_ELSE:
+					case VERA_NODE_ELSE:
 					{
-						if($nodes[get_last_element($parent_stack)]->GetType() != FTE_NODE_IF)
+						if($nodes[vera_last_element($parent_stack)]->GetType() != VERA_NODE_IF)
 							throw new Exception('FluxTE : Else found without If!');
-						$nodes[$i]->SetParentId(FTE_UNASSIGNED);
-						$nodes[get_last_element($parent_stack)]->SetElse($nodes[$i]);
+						$nodes[$i]->SetParentId(VERA_UNASSIGNED);
+						$nodes[vera_last_element($parent_stack)]->SetElse($nodes[$i]);
 						array_pop($parent_stack);
 						array_push($parent_stack, $i);
 						break;
 					}
 					
-					case FTE_INSTR_EIF:
+					case VERA_INSTR_EIF:
 					{
-						if($nodes[get_last_element($parent_stack)]->GetType() != FTE_NODE_IF
-							&& $nodes[get_last_element($parent_stack)]->GetType() != FTE_NODE_ELSE)
+						if($nodes[vera_last_element($parent_stack)]->GetType() != VERA_NODE_IF
+							&& $nodes[vera_last_element($parent_stack)]->GetType() != VERA_NODE_ELSE)
 							throw new Exception('FluxTE : EndIf found without If or Else!');
 						array_pop($parent_stack);
 						break;
 					}
 					
-					case FTE_NODE_EACH:
+					case VERA_NODE_EACH:
 					{
 						array_push($parent_stack, $i);
 						break;
 					}
 					
-					case FTE_INSTR_EEACH:
+					case VERA_INSTR_EEACH:
 					{
-						if($nodes[get_last_element($parent_stack)]->GetType() != FTE_NODE_EACH)
+						if($nodes[vera_last_element($parent_stack)]->GetType() != VERA_NODE_EACH)
 							throw new Exception('FluxTE : EndEach found without Each!');
 						array_pop($parent_stack);
 						break;
@@ -208,7 +208,7 @@ class FluxTemplate
 		
 		$output = '';
 		foreach($nodes as $node)
-			if($node->GetParentId() == FTE_ROOT)
+			if($node->GetParentId() == VERA_ROOT)
 				$output .= $node->GetOutput();
 		return $output;
 	}

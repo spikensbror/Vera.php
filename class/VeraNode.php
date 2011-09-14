@@ -1,11 +1,11 @@
 <?php
 
 /**
- * FluxTE Node Object
+ * Vera Node Object
  * 
  * Handles node ouput and input.
  */
-class FluxNode
+class VeraNode
 {
 	/**
 	 * Type of the node.
@@ -35,17 +35,17 @@ class FluxNode
 	 * Parent id of the node.
 	 * @var int 
 	 */
-	private $_ParentId = FTE_ROOT;
+	private $_ParentId = VERA_ROOT;
 	
 	/**
 	 * Parent node of the node.
-	 * @var FluxNode 
+	 * @var VeraNode 
 	 */
 	private $_Parent = null;
 	
 	/**
 	 * Else node for if statements.
-	 * @var FluxNode 
+	 * @var VeraNode 
 	 */
 	private $_Else = null;
 	
@@ -70,27 +70,27 @@ class FluxNode
 		
 		$output = '';
 		$parse_child = false;
-		if($this->_Type != FTE_NODE_STRING)
+		if($this->_Type != VERA_NODE_STRING)
 		{
 			$tag = $this->_Data;
-			if($this->_Type != FTE_NODE_EACH)
-				$tag = fte_preprocess_variables($tag);
-			$tag = fte_sanitize($tag);
-			if($this->_Type != FTE_NODE_EACH)
-				$tag = fte_process_variables($tag, $variables);
+			if($this->_Type != VERA_NODE_EACH)
+				$tag = vera_preprocess_variables($tag);
+			$tag = vera_sanitize($tag);
+			if($this->_Type != VERA_NODE_EACH)
+				$tag = vera_process_variables($tag, $variables);
 		}
 		
 		switch($this->_Type)
 		{
-			case FTE_NODE_VAR:
+			case VERA_NODE_VAR:
 			{
 				$output = $tag;
 				break;
 			}
 			
-			case FTE_NODE_IF:
+			case VERA_NODE_IF:
 			{
-				$tag = trim(fte_match('/\((.*?)\)/', $tag), '()');
+				$tag = trim(vera_match('/\((.*?)\)/', $tag), '()');
 				if($tag != '')
 					$parse_child = true;
 				else
@@ -98,30 +98,30 @@ class FluxNode
 				break;
 			}
 			
-			case FTE_NODE_ELSE:
+			case VERA_NODE_ELSE:
 			{
 				$parse_child = true;
 				break;
 			}
 			
-			case FTE_NODE_STRING:
+			case VERA_NODE_STRING:
 			{
 				$output = $this->_Data;
 				break;
 			}
 			
-			case FTE_NODE_INCLUDE:
+			case VERA_NODE_INCLUDE:
 			{
-				$tag = trim(fte_match('/\((.*?)\)/', $tag), '()');
+				$tag = trim(vera_match('/\((.*?)\)/', $tag), '()');
 				if($tag == '')
 					break;
 				$output = $this->_Template->GetOutput($tag);
 				break;
 			}
 			
-			case FTE_NODE_EACH:
+			case VERA_NODE_EACH:
 			{
-				$tag = trim(fte_match('/\((.*?)\)/', $tag), '()');
+				$tag = trim(vera_match('/\((.*?)\)/', $tag), '()');
 				$tag = substr($tag, 1);
 				$each_array = $this->_Template->GetVar($tag);
 				
@@ -156,7 +156,7 @@ class FluxNode
 	
 	/**
 	 * Adds a child node to the node.
-	 * @param FluxNode $node 
+	 * @param VeraNode $node 
 	 */
 	public function AddChild(&$node)
 	{
@@ -183,7 +183,7 @@ class FluxNode
 	
 	/**
 	 * Sets the nodes parent node.
-	 * @param FluxNode $node 
+	 * @param VeraNode $node 
 	 */
 	public function SetParent(&$node)
 	{
@@ -192,7 +192,7 @@ class FluxNode
 	
 	/**
 	 * Sets the else node for if nodes.
-	 * @param FluxNode $node 
+	 * @param VeraNode $node 
 	 */
 	public function SetElse(&$node)
 	{
