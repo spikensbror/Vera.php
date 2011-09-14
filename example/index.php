@@ -5,22 +5,25 @@ include_once('../Vera.php');
 
 // Instanciate.
 $template = new VeraTemplate();
+
 // Set template root to current directory.
 $template->SetTemplateRoot(dirname(__FILE__));
+
 // Assign some mock values.
-$template->AssignValue('test', true);
-$template->AssignValue('out_test', 'BUDDY');
-$template->AssignValue('file_test', 'include');
+$template->AssignValue('test', 'Hello People!');
+$template->AssignValue('include_test', 'include');
+
 $template->AssignValue
 (
 	'each_test',
 	array
 	(
-		array('test' => 'Hello Bed', 'arr' => array('var' => 'Jibberish')),
-		array('test' => 'Hello World'),
-		array('test' => 'Hello Friend')
+		array('var' => 'Hello Bed', 'var2' => 'I am tired!'),
+		array('var' => 'Hello World!'),
+		array('var' => 'Hello Friend!')
 	)
 );
+
 $template->AssignValue
 (
 	'array',
