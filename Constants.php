@@ -1,8 +1,5 @@
 <?php
 
-// Vera root directory.
-define('VERA_DIR', dirname(__FILE__).'/');
-
 // Node types.
 define('VERA_NODE_VAR', 10); // Assigned Var
 define('VERA_NODE_IF', 11); // If
