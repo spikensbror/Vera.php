@@ -17,9 +17,9 @@ function vera_last_element($array)
  */
 function vera_preprocess_variables($tag)
 {
-	$matches = vera_match_all('/\$[a-zA-Z0-9_]*\[.*?\]/', $tag);
+	$matches = vera_match_all('/\$[a-zA-Z0-9_\*]*\[.*?\]/', $tag);
 	if(empty($matches) || $matches[0] == null)
-		$matches = vera_match_all('/\$[a-zA-Z0-9_]*/', $tag);
+		$matches = vera_match_all('/\$[a-zA-Z0-9_\*]*/', $tag);
 	
 	foreach($matches as $match)
 		$tag = str_replace($match, '('.$match.')', $tag);
@@ -42,6 +42,13 @@ function vera_process_variables($tag, $variables)
 	{
 		$match = substr(trim($match, '()'), 1);
 		$match2 = vera_match('/\[.*?\]/', $match);
+		$strip = true;
+		if(substr($match, -1) == '*')
+		{
+			$match = substr($match, 0, strlen($match)-1);
+			$strip = false;
+		}
+		var_dump($match);
 		if($match2 != '')
 		{
 			$match2 = trim($match2, '[]');
@@ -52,8 +59,11 @@ function vera_process_variables($tag, $variables)
 		}
 		else
 			$assigned = (isset($variables[$match])) ? $variables[$match] : '';
-		$assigned = htmlentities($assigned);
-		$tag = str_replace('($'.$match.')', (string)$assigned, $tag);
+		
+		if($strip)
+			$assigned = htmlentities($assigned);
+		
+		$tag = str_replace('($'.$match.((!$strip) ? '*' : '').')', (string)$assigned, $tag);
 	}
 	return $tag;
 }

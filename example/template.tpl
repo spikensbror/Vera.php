@@ -40,7 +40,8 @@
 		</p>
 		<h3>HTML Variables</h3>
 		<p>
-			{$html_test}
+			Stripped: {$html_test}
+			Not stripped: {$html_test*}
 		</p>
 	</body>
 </html>

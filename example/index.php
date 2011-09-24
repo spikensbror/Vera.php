@@ -34,7 +34,7 @@ $template->AssignValue
 	)
 );
 
-$template->AssignValue('html_test', '<h2>Hello</h2>');
+$template->AssignValue('html_test', '<b>Hello</b>');
 
 // Display.
 $template->Display('template.tpl');
