@@ -38,5 +38,9 @@
 			{$array['test']}<br/>
 			{$array[0]}
 		</p>
+		<h3>HTML Variables</h3>
+		<p>
+			{$html_test}
+		</p>
 	</body>
 </html>

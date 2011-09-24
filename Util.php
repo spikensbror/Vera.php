@@ -52,6 +52,7 @@ function vera_process_variables($tag, $variables)
 		}
 		else
 			$assigned = (isset($variables[$match])) ? $variables[$match] : '';
+		$assigned = htmlentities($assigned);
 		$tag = str_replace('($'.$match.')', (string)$assigned, $tag);
 	}
 	return $tag;
