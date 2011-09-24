@@ -48,7 +48,7 @@ function vera_process_variables($tag, $variables)
 			$match = substr($match, 0, strlen($match)-1);
 			$strip = false;
 		}
-		var_dump($match);
+		
 		if($match2 != '')
 		{
 			$match2 = trim($match2, '[]');
